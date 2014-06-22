@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BDF4389B14E5638700A27135"
-               BuildableName = "RotaryWheelProject.app"
+               BuildableName = "SMWheelControl.app"
                BlueprintName = "SMWheelControl"
                ReferencedContainer = "container:SMWheelControl.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BDF4389B14E5638700A27135"
-            BuildableName = "RotaryWheelProject.app"
+            BuildableName = "SMWheelControl.app"
             BlueprintName = "SMWheelControl"
             ReferencedContainer = "container:SMWheelControl.xcodeproj">
          </BuildableReference>
@@ -52,7 +52,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BDF4389B14E5638700A27135"
-            BuildableName = "RotaryWheelProject.app"
+            BuildableName = "SMWheelControl.app"
             BlueprintName = "SMWheelControl"
             ReferencedContainer = "container:SMWheelControl.xcodeproj">
          </BuildableReference>
@@ -70,7 +70,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BDF4389B14E5638700A27135"
-            BuildableName = "RotaryWheelProject.app"
+            BuildableName = "SMWheelControl.app"
             BlueprintName = "SMWheelControl"
             ReferencedContainer = "container:SMWheelControl.xcodeproj">
          </BuildableReference>

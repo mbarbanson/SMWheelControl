@@ -17,9 +17,11 @@
 @property CGAffineTransform startTransform;
 @property (nonatomic, strong) NSMutableArray *cloves;
 @property int currentValue;
+@property (nonatomic, strong) UIButton *centerButton;
 
 
 - (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber;
-
+- (void)centerButtonHandler:(UIButton *)sender;
++ (NSString *) getCloveName:(int)position;
 
 @end

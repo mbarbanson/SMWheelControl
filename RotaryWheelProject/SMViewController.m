@@ -9,9 +9,15 @@
 #import "SMViewController.h"
 #import "SMRotaryWheel.h"
 
+@interface SMViewController ()
+@property (nonatomic, assign) CGFloat diameter;
+@end
+
 @implementation SMViewController
 
 @synthesize  valueLabel;
+// original project assets are assuming this size
+static float diameter = 280.0;
 
 - (void)didReceiveMemoryWarning
 {
@@ -24,26 +30,30 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    valueLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 350, 120, 30)];
+#ifdef DEBUG
+    valueLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 120, 30)];
     valueLabel.textAlignment = UITextAlignmentCenter;
     valueLabel.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:valueLabel];
+#endif
+    
+    // init wheel dimensions and number of sectors. start out at bottom of screen withonly top half showing
+	CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+    self.diameter = diameter;
 	
-    SMRotaryWheel *wheel = [[SMRotaryWheel alloc] initWithFrame:CGRectMake(0, 0, 200, 200)  
-                                                    andDelegate:self 
-                                                   withSections:8];
-    
-    wheel.center = CGPointMake(160, 240);
+    SMRotaryWheel *wheel = [[SMRotaryWheel alloc] initWithFrame:CGRectMake(0,0, self.diameter, self.diameter)
+                                                    andDelegate:self
+                                                   withSections:6];
+
+    wheel.center = CGPointMake(screenWidth/2, screenHeight);
     [self.view addSubview:wheel];
-    
-    
     
 }
 
-- (void) wheelDidChangeValue:(NSString *)newValue {
+- (void) wheelDidChangeValue:(int)newValue {
 
-    self.valueLabel.text = newValue;
+    self.valueLabel.text = [SMRotaryWheel getCloveName:newValue];
     
 }
 

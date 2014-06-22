@@ -16,12 +16,19 @@
     - (void) buildClovesEven;
     - (void) buildClovesOdd;
     - (UIImageView *) getCloveByValue:(int)value;
-    - (NSString *) getCloveName:(int)position;
+
 @end
 
 static float deltaAngle;
 static float minAlphavalue = 0.6;
 static float maxAlphavalue = 1.0;
+static float centerButtonRadius = 40.6;
+static float sectorWidth = 98;
+static float sectorHeight = 126;
+static float sectorIconX = 26;
+static float sectorIconY = 26;
+static float sectorIconSize = 40;
+static float startingAngle = M_PI_2;
 
 @implementation SMRotaryWheel
 
@@ -46,16 +53,17 @@ static float maxAlphavalue = 1.0;
 - (void) drawWheel {
 
     container = [[UIView alloc] initWithFrame:self.frame];
-        
     CGFloat angleSize = 2*M_PI/numberOfSections;
-    
+
     for (int i = 0; i < numberOfSections; i++) {
-        
-        UIImageView *im = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"segment.png"]];
-        
-        im.layer.anchorPoint = CGPointMake(1.0f, 0.5f);
+        UIImage *sectorBackground = [UIImage imageNamed:@"segmentVertical.png"];
+        UIImageView *im = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, sectorWidth, sectorHeight)];  //Image:[UIImage imageNamed:]];
+        im.contentMode = UIViewContentModeScaleAspectFill;
+        im.image = sectorBackground;
+        im.layer.anchorPoint = CGPointMake(0.5f, 1.0f);
         im.layer.position = CGPointMake(container.bounds.size.width/2.0-container.frame.origin.x, 
-                                        container.bounds.size.height/2.0-container.frame.origin.y); 
+                                        container.bounds.size.height/2.0-container.frame.origin.y);
+    
         im.transform = CGAffineTransformMakeRotation(angleSize*i);
         im.alpha = minAlphavalue;
         im.tag = i;
@@ -64,7 +72,7 @@ static float maxAlphavalue = 1.0;
             im.alpha = maxAlphavalue;
         }
         
-        UIImageView *cloveImage = [[UIImageView alloc] initWithFrame:CGRectMake(12, 15, 40, 40)];
+        UIImageView *cloveImage = [[UIImageView alloc] initWithFrame:CGRectMake(sectorIconX, sectorIconY, sectorIconSize, sectorIconSize)];
         cloveImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"icon%i.png", i]];
         [im addSubview:cloveImage];
         
@@ -79,13 +87,22 @@ static float maxAlphavalue = 1.0;
     
     UIImageView *bg = [[UIImageView alloc] initWithFrame:self.frame];
     bg.image = [UIImage imageNamed:@"bg.png"];
+    bg.transform = CGAffineTransformMakeRotation(startingAngle);
     [self addSubview:bg];
-    
-    UIImageView *mask = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 58, 58)];
+    /*
+    UIImageView *mask = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, centerButtonRadius*2, centerButtonRadius*2)];
     mask.image =[UIImage imageNamed:@"centerButton.png"] ;
     mask.center = self.center;
-    mask.center = CGPointMake(mask.center.x, mask.center.y+3);
+    mask.center = CGPointMake(mask.center.x-4, mask.center.y);
     [self addSubview:mask];
+    */
+    self.centerButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, centerButtonRadius*2, centerButtonRadius*2)];
+    [self.centerButton setImage:[UIImage imageNamed:@"centerButton.png"] forState:UIControlStateNormal];
+    self.centerButton.center = self.center;
+    self.centerButton.center = CGPointMake(self.centerButton.center.x-4, self.centerButton.center.y);
+    [self.centerButton addTarget:self action:@selector(centerButtonHandler:)
+             forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.centerButton];
     
     if (numberOfSections % 2 == 0) {
         
@@ -97,7 +114,7 @@ static float maxAlphavalue = 1.0;
         
     }
     
-    [self.delegate wheelDidChangeValue:[self getCloveName:currentValue]];
+    [self.delegate wheelDidChangeValue:currentValue];
 
     
 }
@@ -123,8 +140,8 @@ static float maxAlphavalue = 1.0;
 - (void) buildClovesEven {
     
     CGFloat fanWidth = M_PI*2/numberOfSections;
-    CGFloat mid = 0;
-    
+    CGFloat mid = 0; //startingAngle;
+
     for (int i = 0; i < numberOfSections; i++) {
         
         SMClove *clove = [[SMClove alloc] init];
@@ -197,18 +214,20 @@ static float maxAlphavalue = 1.0;
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     
     CGPoint touchPoint = [touch locationInView:self];
-    float dist = [self calculateDistanceFromCenter:touchPoint];
-    
-    if (dist < 40 || dist > 100) 
+    CGFloat dist = [self calculateDistanceFromCenter:touchPoint];
+    CGSize size = self.container.bounds.size;
+    CGFloat diameter = size.width;
+
+    if (dist < centerButtonRadius || dist > diameter/2)
     {
-        // forcing a tap to be on the ferrule
+        // forcing a tap to be on the sector
         NSLog(@"ignoring tap (%f,%f)", touchPoint.x, touchPoint.y);
         return NO;
     }
-    
+
 	float dx = touchPoint.x - container.center.x;
 	float dy = touchPoint.y - container.center.y;
-	deltaAngle = atan2(dy,dx); 
+	deltaAngle = atan2(dy,dx);
     
     startTransform = container.transform;
     
@@ -225,18 +244,14 @@ static float maxAlphavalue = 1.0;
 	CGPoint pt = [touch locationInView:self];
     
     float dist = [self calculateDistanceFromCenter:pt];
+    CGSize size = self.container.bounds.size;
+    CGFloat diameter = size.width;
     
-    if (dist < 40 || dist > 100) 
+    if (dist < centerButtonRadius || dist > diameter/2)
     {
         // a drag path too close to the center
         NSLog(@"drag path too close to the center (%f,%f)", pt.x, pt.y);
         
-        // here you might want to implement your solution when the drag 
-        // is too close to the center
-        // You might go back to the clove previously selected
-        // or you might calculate the clove corresponding to
-        // the "exit point" of the drag.
-
     }
 	
 	float dx = pt.x  - container.center.x;
@@ -296,24 +311,31 @@ static float maxAlphavalue = 1.0;
     
     [UIView commitAnimations];
     
-    [self.delegate wheelDidChangeValue:[self getCloveName:currentValue]];
+    [self.delegate wheelDidChangeValue:currentValue];
     
     UIImageView *im = [self getCloveByValue:currentValue];
     im.alpha = maxAlphavalue;
     
 }
 
-- (NSString *) getCloveName:(int)position {
+
+- (void)centerButtonHandler:(UIButton *)sender
+{
+    NSLog(@"touched up inside center button. go to dashboard");
+}
+     
+
++ (NSString *) getCloveName:(int)position {
     
     NSString *res = @"";
     
     switch (position) {
         case 0:
-            res = @"Circles";
+            res = @"Star";
             break;
             
         case 1:
-            res = @"Flower";
+            res = @"All Rooms";
             break;
             
         case 2:
