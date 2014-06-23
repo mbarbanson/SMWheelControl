@@ -42,19 +42,31 @@ static float diameter = 280.0;
     CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
     self.diameter = diameter;
 	
-    SMRotaryWheel *wheel = [[SMRotaryWheel alloc] initWithFrame:CGRectMake(0,0, self.diameter, self.diameter)
-                                                    andDelegate:self
-                                                   withSections:6];
+    SMRotaryWheel *wheel = [SMRotaryWheel wheelControlWithFrame:CGRectMake(0,0, self.diameter, self.diameter)
+                                                       delegate:self
+                                                    andSections:6];
 
     wheel.center = CGPointMake(screenWidth/2, screenHeight);
     [self.view addSubview:wheel];
     
 }
 
+
+
 - (void) wheelDidChangeValue:(int)newValue {
 
     self.valueLabel.text = [SMRotaryWheel getCloveName:newValue];
     
+}
+
+- (void) wheelDidSwipeUp
+{
+    NSLog(@"show the wheel fully");
+}
+
+- (void) wheelDidSwipeDown
+{
+    NSLog(@"hide bottom part of the wheel");
 }
 
 

@@ -12,15 +12,12 @@
 @interface SMRotaryWheel : UIControl
 
 @property (weak) id <SMRotaryProtocol> delegate;
-@property (nonatomic, strong) UIView *container;
-@property int numberOfSections;
-@property CGAffineTransform startTransform;
-@property (nonatomic, strong) NSMutableArray *cloves;
 @property int currentValue;
 @property (nonatomic, strong) UIButton *centerButton;
+@property (nonatomic, assign) BOOL rotationDisabled;
 
++ (SMRotaryWheel *)wheelControlWithFrame:(CGRect)rect delegate:(id)delegate andSections:(NSUInteger *)numSections;
 
-- (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber;
 - (void)centerButtonHandler:(UIButton *)sender;
 + (NSString *) getCloveName:(int)position;
 

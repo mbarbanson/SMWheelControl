@@ -11,11 +11,16 @@
 #import "SMCLove.h"
 
 @interface SMRotaryWheel()
-    - (void)drawWheel;
-    - (float) calculateDistanceFromCenter:(CGPoint)point;
-    - (void) buildClovesEven;
-    - (void) buildClovesOdd;
-    - (UIImageView *) getCloveByValue:(int)value;
+@property (nonatomic, strong) UIView *container;
+@property int numberOfSections;
+@property CGAffineTransform startTransform;
+@property (nonatomic, strong) NSMutableArray *cloves;
+
+- (void)drawWheel;
+- (float) calculateDistanceFromCenter:(CGPoint)point;
+- (void) buildClovesEven;
+- (void) buildClovesOdd;
+- (UIImageView *) getCloveByValue:(int)value;
 
 @end
 
@@ -35,6 +40,12 @@ static float startingAngle = M_PI_2;
 @synthesize delegate, container, numberOfSections, startTransform, cloves, currentValue;
 
 
++ (SMRotaryWheel *)wheelControlWithFrame:(CGRect)rect delegate:(id)delegate andSections:(NSUInteger *)numSections
+{
+    SMRotaryWheel *wheel = [[SMRotaryWheel alloc] initWithFrame:rect andDelegate:delegate withSections:numSections];
+    return wheel;
+}
+
 - (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber {
     
     if ((self = [super initWithFrame:frame])) {
@@ -43,6 +54,21 @@ static float startingAngle = M_PI_2;
         self.numberOfSections = sectionsNumber;
         self.delegate = del;
 		[self drawWheel];
+        
+        // Add a gesture recognizer to support swiping up
+        UISwipeGestureRecognizer * upSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeUp:)];
+        upSwipeRecognizer.delegate = del;
+        upSwipeRecognizer.delaysTouchesBegan = YES;
+        [upSwipeRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
+        [self addGestureRecognizer:upSwipeRecognizer];
+        
+        // down swipe recognizer
+        UISwipeGestureRecognizer * downSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDown:)];
+        downSwipeRecognizer.delegate = del;
+        downSwipeRecognizer.delaysTouchesBegan = YES;
+        [downSwipeRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
+        [self addGestureRecognizer:downSwipeRecognizer];
+        
         
 	}
     return self;
@@ -211,6 +237,8 @@ static float startingAngle = M_PI_2;
     
 }
 
+#pragma mark - touch event handling
+
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     
     CGPoint touchPoint = [touch locationInView:self];
@@ -240,7 +268,11 @@ static float startingAngle = M_PI_2;
 
 - (BOOL)continueTrackingWithTouch:(UITouch*)touch withEvent:(UIEvent*)event
 {
-        
+    
+    if (self.rotationDisabled) {
+        return NO;
+    }
+    
 	CGPoint pt = [touch locationInView:self];
     
     float dist = [self calculateDistanceFromCenter:pt];
@@ -373,6 +405,62 @@ static float startingAngle = M_PI_2;
     return res;
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+
+- (IBAction)handleSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+	CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    CGFloat diameter = self.bounds.size.width;
+    CGFloat upOffset = diameter/2;
+    CGFloat newY = recognizer.view.center.y - upOffset;
+
+    
+    if (recognizer.direction == UISwipeGestureRecognizerDirectionUp && newY <=  screenHeight - diameter/2) {
+        
+        [UIView animateWithDuration:1
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             recognizer.view.alpha = 1.0;
+                             recognizer.view.center = CGPointMake(recognizer.view.center.x, screenHeight - diameter/2);
+                         }
+         // wheel rotation is disabled when it's fully displayed
+                         completion:^(BOOL finished){ self.rotationDisabled = YES; }
+         ];
+    }
+    
+}
+
+
+- (IBAction)handleSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+	CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    CGFloat diameter = self.bounds.size.width;
+    CGFloat dnOffset = diameter/2;
+    CGFloat newY = recognizer.view.center.y + dnOffset;
+    
+    if (recognizer.direction == UISwipeGestureRecognizerDirectionDown && newY >=  screenHeight) {
+        
+        [UIView animateWithDuration:1
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             recognizer.view.center = CGPointMake(recognizer.view.center.x, screenHeight);
+                         }
+         // reenable rotation of wheel when it's half hidden
+                         completion:^(BOOL finished){ self.rotationDisabled = NO; }
+         ];
+    }
+    
+}
+
+/*
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if ([touch.view isKindOfClass:[SMRotaryWheel class]])
+    {
+        return YES;
+    }
+    return NO;
+}
+*/
 
 
 @end

@@ -30,6 +30,7 @@
 		BDF438BF14E5641000A27135 /* SMRotaryWheel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF438BE14E5641000A27135 /* SMRotaryWheel.m */; };
 		BDF438C614E572EB00A27135 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF438C514E572EB00A27135 /* QuartzCore.framework */; };
 		D54FBB421953D3FC0030F232 /* segmentVertical.png in Resources */ = {isa = PBXBuildFile; fileRef = D54FBB411953D3FC0030F232 /* segmentVertical.png */; };
+		D5FF24F81957976400C995B2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5FF24F71957976400C995B2 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		BDF438C414E56B4B00A27135 /* SMRotaryProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMRotaryProtocol.h; sourceTree = "<group>"; };
 		BDF438C514E572EB00A27135 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D54FBB411953D3FC0030F232 /* segmentVertical.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = segmentVertical.png; sourceTree = "<group>"; };
+		D5FF24F71957976400C995B2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				BDF438C414E56B4B00A27135 /* SMRotaryProtocol.h */,
 				BDD8AD3414EA8A1B002425D6 /* SMCLove.h */,
 				BDD8AD3514EA8A1B002425D6 /* SMCLove.m */,
+				D5FF24F71957976400C995B2 /* Images.xcassets */,
 			);
 			name = SMWheelControl;
 			path = RotaryWheelProject;
@@ -220,6 +223,7 @@
 				BD683C5F14EAB964005EF069 /* centerButton.png in Resources */,
 				BD683C6014EAB964005EF069 /* icon0.png in Resources */,
 				BD683C6114EAB964005EF069 /* icon1.png in Resources */,
+				D5FF24F81957976400C995B2 /* Images.xcassets in Resources */,
 				BD683C6214EAB964005EF069 /* icon2.png in Resources */,
 				BD683C6314EAB964005EF069 /* icon3.png in Resources */,
 				BD683C6414EAB964005EF069 /* icon4.png in Resources */,
