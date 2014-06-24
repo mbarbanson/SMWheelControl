@@ -10,9 +10,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "SMCLove.h"
 
-@interface SMRotaryWheel()
+@interface SMRotaryWheel() 
 @property (nonatomic, strong) UIView *container;
 @property int numberOfSections;
+@property (nonatomic, strong) NSMutableArray *sections;
 @property CGAffineTransform startTransform;
 @property (nonatomic, strong) NSMutableArray *cloves;
 
@@ -52,13 +53,15 @@ static float startingAngle = M_PI_2;
 		
         self.currentValue = 0;
         self.numberOfSections = sectionsNumber;
+        self.sections = [NSMutableArray arrayWithCapacity:sectionsNumber];
         self.delegate = del;
-		[self drawWheel];
+        self.rotationDisabled = NO;
         
         // Add a gesture recognizer to support swiping up
         UISwipeGestureRecognizer * upSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeUp:)];
         upSwipeRecognizer.delegate = del;
         upSwipeRecognizer.delaysTouchesBegan = YES;
+        upSwipeRecognizer.cancelsTouchesInView = NO;
         [upSwipeRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
         [self addGestureRecognizer:upSwipeRecognizer];
         
@@ -66,9 +69,21 @@ static float startingAngle = M_PI_2;
         UISwipeGestureRecognizer * downSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDown:)];
         downSwipeRecognizer.delegate = del;
         downSwipeRecognizer.delaysTouchesBegan = YES;
+        downSwipeRecognizer.cancelsTouchesInView = NO;
         [downSwipeRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
         [self addGestureRecognizer:downSwipeRecognizer];
-        
+
+        // tap recognizer
+        UITapGestureRecognizer * tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        tapRecognizer.delegate = del;
+        tapRecognizer.delaysTouchesBegan = NO;
+        tapRecognizer.cancelsTouchesInView = NO;
+        tapRecognizer.numberOfTapsRequired = 1;
+        [self addGestureRecognizer:tapRecognizer];
+
+		[self drawWheel];
+        [self enableTaps:NO withDelegate: del];  // start in half wheel mode, with taps disabled and rotation enabled
+
         
 	}
     return self;
@@ -91,22 +106,23 @@ static float startingAngle = M_PI_2;
                                         container.bounds.size.height/2.0-container.frame.origin.y);
     
         im.transform = CGAffineTransformMakeRotation(angleSize*i);
-        im.alpha = minAlphavalue;
+        im.alpha = self.rotationDisabled? maxAlphavalue : minAlphavalue;
         im.tag = i;
-        
+        im.userInteractionEnabled = NO;
         if (i == 0) {
             im.alpha = maxAlphavalue;
         }
         
         UIImageView *cloveImage = [[UIImageView alloc] initWithFrame:CGRectMake(sectorIconX, sectorIconY, sectorIconSize, sectorIconSize)];
         cloveImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"icon%i.png", i]];
+        cloveImage.tag = i;
         [im addSubview:cloveImage];
-        
+
+        self.sections[i] = im;
         [container addSubview:im];
         
     }
-    
-    container.userInteractionEnabled = NO;
+
     [self addSubview:container];
     
     cloves = [NSMutableArray arrayWithCapacity:numberOfSections];
@@ -114,20 +130,16 @@ static float startingAngle = M_PI_2;
     UIImageView *bg = [[UIImageView alloc] initWithFrame:self.frame];
     bg.image = [UIImage imageNamed:@"bg.png"];
     bg.transform = CGAffineTransformMakeRotation(startingAngle);
+    bg.userInteractionEnabled = NO;
     [self addSubview:bg];
-    /*
-    UIImageView *mask = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, centerButtonRadius*2, centerButtonRadius*2)];
-    mask.image =[UIImage imageNamed:@"centerButton.png"] ;
-    mask.center = self.center;
-    mask.center = CGPointMake(mask.center.x-4, mask.center.y);
-    [self addSubview:mask];
-    */
+
     self.centerButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, centerButtonRadius*2, centerButtonRadius*2)];
     [self.centerButton setImage:[UIImage imageNamed:@"centerButton.png"] forState:UIControlStateNormal];
     self.centerButton.center = self.center;
     self.centerButton.center = CGPointMake(self.centerButton.center.x-4, self.centerButton.center.y);
     [self.centerButton addTarget:self action:@selector(centerButtonHandler:)
              forControlEvents:UIControlEventTouchUpInside];
+    self.centerButton.tag = 7;// center button
     [self addSubview:self.centerButton];
     
     if (numberOfSections % 2 == 0) {
@@ -140,7 +152,7 @@ static float startingAngle = M_PI_2;
         
     }
     
-    [self.delegate wheelDidChangeValue:currentValue];
+    [self.delegate wheel:self didChangeValue:currentValue];
 
     
 }
@@ -238,6 +250,22 @@ static float startingAngle = M_PI_2;
 }
 
 #pragma mark - touch event handling
+- (void)enableTaps:(BOOL)enable withDelegate:(id) del
+{
+    // tap and rotation are mutually exclusive. either we rotate a sector to top to select it or when wheel is showing fully, we tap to select a sector
+    self.tapEnabled = enable;
+    self.rotationDisabled = enable;
+    if (self.sections.count > 0)
+    {
+        for (int i = 0; i < numberOfSections; i++) {
+            UIView * sector = (UIView *)self.sections[i];
+            sector.userInteractionEnabled = enable;
+        }
+    }
+    // user interaction must be enabled to respond to hitTest method used to detect which sector was selected
+    container.userInteractionEnabled = enable;
+    if (self.centerButton) self.centerButton.userInteractionEnabled = enable;
+}
 
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     
@@ -283,7 +311,6 @@ static float startingAngle = M_PI_2;
     {
         // a drag path too close to the center
         NSLog(@"drag path too close to the center (%f,%f)", pt.x, pt.y);
-        
     }
 	
 	float dx = pt.x  - container.center.x;
@@ -300,7 +327,10 @@ static float startingAngle = M_PI_2;
 
 - (void)endTrackingWithTouch:(UITouch*)touch withEvent:(UIEvent*)event
 {
-    
+
+    if (self.rotationDisabled) {
+        return;
+    }
     CGFloat radians = atan2f(container.transform.b, container.transform.a);
     
     CGFloat newVal = 0.0;
@@ -343,19 +373,18 @@ static float startingAngle = M_PI_2;
     
     [UIView commitAnimations];
     
-    [self.delegate wheelDidChangeValue:currentValue];
+    [self.delegate wheel:self didChangeValue:currentValue];
     
     UIImageView *im = [self getCloveByValue:currentValue];
     im.alpha = maxAlphavalue;
     
 }
 
-
-- (void)centerButtonHandler:(UIButton *)sender
+- (void)cancelTrackingWithEvent:(UIEvent *)event
 {
-    NSLog(@"touched up inside center button. go to dashboard");
+    NSLog(@"cancelTrackingWithEvent %@", event);
 }
-     
+
 
 + (NSString *) getCloveName:(int)position {
     
@@ -405,9 +434,15 @@ static float startingAngle = M_PI_2;
     return res;
 }
 
+- (void)centerButtonHandler:(UIButton *)sender
+{
+    NSLog(@"touched up inside center button");
+    [self.delegate wheelDidSelectCenterButton];
+}
+
 #pragma mark - UIGestureRecognizerDelegate
 
-- (IBAction)handleSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+- (void)handleSwipeUp:(UISwipeGestureRecognizer *)recognizer {
 	CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     CGFloat diameter = self.bounds.size.width;
     CGFloat upOffset = diameter/2;
@@ -424,14 +459,16 @@ static float startingAngle = M_PI_2;
                              recognizer.view.center = CGPointMake(recognizer.view.center.x, screenHeight - diameter/2);
                          }
          // wheel rotation is disabled when it's fully displayed
-                         completion:^(BOOL finished){ self.rotationDisabled = YES; }
+                         completion:^(BOOL finished){
+                             [self enableTaps:YES withDelegate: self.delegate];
+                         }
          ];
     }
     
 }
 
 
-- (IBAction)handleSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+- (void)handleSwipeDown:(UISwipeGestureRecognizer *)recognizer {
 	CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     CGFloat diameter = self.bounds.size.width;
     CGFloat dnOffset = diameter/2;
@@ -446,21 +483,43 @@ static float startingAngle = M_PI_2;
                              recognizer.view.center = CGPointMake(recognizer.view.center.x, screenHeight);
                          }
          // reenable rotation of wheel when it's half hidden
-                         completion:^(BOOL finished){ self.rotationDisabled = NO; }
+                         completion:^(BOOL finished){
+                             [self enableTaps:NO withDelegate:self.delegate];
+                         }
          ];
     }
     
 }
 
-/*
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if ([touch.view isKindOfClass:[SMRotaryWheel class]])
-    {
-        return YES;
+
+- (void)handleTap:(UITapGestureRecognizer *)sender
+{
+    if (!self.tapEnabled) {
+        NSLog(@"detected a tap while taps are disabled");
     }
-    return NO;
+    else {
+
+        UIView* view = sender.view;
+        CGPoint loc = [sender locationInView:view];
+        UIView *subview = nil;
+        double index = 0;
+        float dist = [self calculateDistanceFromCenter:loc];
+        
+
+        if (dist > view.bounds.size.width/2) {
+            // touch was outside the wheel            
+            return;
+        }
+        else if ([container pointInside:loc withEvent:nil])
+        {
+            subview = [container hitTest:loc withEvent:nil];
+            index = fmod(subview.tag + currentValue, 6);
+            NSLog(@"detected a tap in wheel %@ at loc %@ container %@", NSStringFromCGSize(view.frame.size), NSStringFromCGPoint(loc), NSStringFromCGSize(container.frame.size));
+        }
+        [self.delegate wheel:self didSelectSectorAtIndex:index];
+    }
 }
-*/
+
 
 
 @end

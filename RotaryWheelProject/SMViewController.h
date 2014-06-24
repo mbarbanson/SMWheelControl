@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SMRotaryProtocol.h"
 
-@interface SMViewController : UIViewController<SMRotaryProtocol>
+@interface SMViewController : UIViewController<SMRotaryProtocol, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UILabel *valueLabel;
 

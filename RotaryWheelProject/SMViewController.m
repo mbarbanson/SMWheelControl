@@ -10,6 +10,7 @@
 #import "SMRotaryWheel.h"
 
 @interface SMViewController ()
+@property (nonatomic, strong) SMRotaryWheel *wheel;
 @property (nonatomic, assign) CGFloat diameter;
 @end
 
@@ -47,16 +48,20 @@ static float diameter = 280.0;
                                                     andSections:6];
 
     wheel.center = CGPointMake(screenWidth/2, screenHeight);
+    self.wheel = wheel;
     [self.view addSubview:wheel];
     
 }
 
 
-
-- (void) wheelDidChangeValue:(int)newValue {
+- (void) wheel:(SMRotaryWheel *)wheel didChangeValue:(int)newValue {
 
     self.valueLabel.text = [SMRotaryWheel getCloveName:newValue];
     
+}
+
+- (void) wheel:(SMRotaryWheel *)wheel didSelectSectorAtIndex:(NSUInteger)index {
+    NSLog(@"didSelectSectorAtIndex %u", index);
 }
 
 - (void) wheelDidSwipeUp
@@ -67,6 +72,12 @@ static float diameter = 280.0;
 - (void) wheelDidSwipeDown
 {
     NSLog(@"hide bottom part of the wheel");
+}
+
+
+- (void) wheelDidSelectCenterButton
+{
+    NSLog(@"wheelDidSelectCenterButton");
 }
 
 

@@ -15,10 +15,11 @@
 @property int currentValue;
 @property (nonatomic, strong) UIButton *centerButton;
 @property (nonatomic, assign) BOOL rotationDisabled;
+@property (nonatomic, assign) BOOL tapEnabled;
 
 + (SMRotaryWheel *)wheelControlWithFrame:(CGRect)rect delegate:(id)delegate andSections:(NSUInteger *)numSections;
++ (NSString *) getCloveName:(int)position;
 
 - (void)centerButtonHandler:(UIButton *)sender;
-+ (NSString *) getCloveName:(int)position;
 
 @end
