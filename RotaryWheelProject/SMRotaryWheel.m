@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSMutableArray *sections;
 @property CGAffineTransform startTransform;
 @property (nonatomic, strong) NSMutableArray *cloves;
+@property (nonatomic, readwrite) int lastSelectedIndex;
 
 - (void)drawWheel;
 - (float) calculateDistanceFromCenter:(CGPoint)point;
@@ -28,7 +29,7 @@
 static float deltaAngle;
 static float minAlphavalue = 0.6;
 static float maxAlphavalue = 1.0;
-static float centerButtonRadius = 40.6;
+static float centerButtonRadius = 30;
 static float sectorWidth = 98;
 static float sectorHeight = 126;
 static float sectorIconX = 26;
@@ -90,6 +91,31 @@ static float startingAngle = M_PI_2;
 }
 
 
+- (void) updateCenterButtonIcon {
+    [self.centerButton setImage:[UIImage imageNamed:@"home-icon-red"] forState:UIControlStateNormal];
+    
+    CGSize imageSize = self.centerButton.imageView.frame.size;
+    CGFloat padding = centerButtonRadius/2;
+    CGFloat totalHeight = (imageSize.height + padding);
+    
+    if (!self.rotationDisabled)
+    {
+        // show home icon in the top half of the centerButton
+        self.centerButton.imageEdgeInsets = UIEdgeInsetsMake(- (totalHeight - imageSize.height),
+                                                             0.0f,
+                                                             0.0f,
+                                                             0.0f);
+    }
+    else {
+        //reset to center the home icon
+        self.centerButton.imageEdgeInsets = UIEdgeInsetsMake(0.0f,
+                                                             0.0f,
+                                                             0.0f,
+                                                             0.0f);
+    }
+    
+}
+
 
 - (void) drawWheel {
 
@@ -97,8 +123,8 @@ static float startingAngle = M_PI_2;
     CGFloat angleSize = 2*M_PI/numberOfSections;
 
     for (int i = 0; i < numberOfSections; i++) {
-        UIImage *sectorBackground = [UIImage imageNamed:@"segmentVertical.png"];
-        UIImageView *im = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, sectorWidth, sectorHeight)];  //Image:[UIImage imageNamed:]];
+        UIImage *sectorBackground = [UIImage imageNamed:@"sector-background"];
+        UIImageView *im = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, sectorWidth, sectorHeight)];
         im.contentMode = UIViewContentModeScaleAspectFill;
         im.image = sectorBackground;
         im.layer.anchorPoint = CGPointMake(0.5f, 1.0f);
@@ -114,7 +140,7 @@ static float startingAngle = M_PI_2;
         }
         
         UIImageView *cloveImage = [[UIImageView alloc] initWithFrame:CGRectMake(sectorIconX, sectorIconY, sectorIconSize, sectorIconSize)];
-        cloveImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"icon%i.png", i]];
+        cloveImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"wheel-icon%i", i]];
         cloveImage.tag = i;
         [im addSubview:cloveImage];
 
@@ -127,20 +153,26 @@ static float startingAngle = M_PI_2;
     
     cloves = [NSMutableArray arrayWithCapacity:numberOfSections];
     
-    UIImageView *bg = [[UIImageView alloc] initWithFrame:self.frame];
-    bg.image = [UIImage imageNamed:@"bg.png"];
-    bg.transform = CGAffineTransformMakeRotation(startingAngle);
-    bg.userInteractionEnabled = NO;
-    [self addSubview:bg];
-
     self.centerButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, centerButtonRadius*2, centerButtonRadius*2)];
-    [self.centerButton setImage:[UIImage imageNamed:@"centerButton.png"] forState:UIControlStateNormal];
+    self.centerButton.layer.cornerRadius = self.centerButton.bounds.size.width/2;
+    self.centerButton.backgroundColor = [UIColor whiteColor];
+    
+    [self updateCenterButtonIcon];
+    
     self.centerButton.center = self.center;
     self.centerButton.center = CGPointMake(self.centerButton.center.x-4, self.centerButton.center.y);
     [self.centerButton addTarget:self action:@selector(centerButtonHandler:)
              forControlEvents:UIControlEventTouchUpInside];
     self.centerButton.tag = 7;// center button
     [self addSubview:self.centerButton];
+
+    UIImage *bgImage = [UIImage imageNamed:@"arrow-circle"];
+    UIImageView *bg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, bgImage.size.width, bgImage.size.height)];
+    bg.center = self.centerButton.center;
+    bg.backgroundColor = [UIColor clearColor];
+    bg.image = bgImage;
+    bg.userInteractionEnabled = NO;
+    [self addSubview:bg];
     
     if (numberOfSections % 2 == 0) {
         
@@ -437,6 +469,9 @@ static float startingAngle = M_PI_2;
 - (void)centerButtonHandler:(UIButton *)sender
 {
     NSLog(@"touched up inside center button");
+    //self.centerButton.backgroundColor = [UIColor whiteColor];
+    UIView *lastSector = (UIView *)self.sections[self.lastSelectedIndex];
+    lastSector.alpha = minAlphavalue;
     [self.delegate wheelDidSelectCenterButton];
 }
 
@@ -455,12 +490,17 @@ static float startingAngle = M_PI_2;
                               delay:0
                             options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
-                             recognizer.view.alpha = 1.0;
+                             //recognizer.view.alpha = 1.0;
                              recognizer.view.center = CGPointMake(recognizer.view.center.x, screenHeight - diameter/2);
+                             self.centerButton.imageEdgeInsets = UIEdgeInsetsMake(0.0f,
+                                                                                  0.0f,
+                                                                                  0.0f,
+                                                                                  0.0f);
                          }
          // wheel rotation is disabled when it's fully displayed
                          completion:^(BOOL finished){
                              [self enableTaps:YES withDelegate: self.delegate];
+                             self.lastSelectedIndex = self.currentValue;
                          }
          ];
     }
@@ -475,12 +515,21 @@ static float startingAngle = M_PI_2;
     CGFloat newY = recognizer.view.center.y + dnOffset;
     
     if (recognizer.direction == UISwipeGestureRecognizerDirectionDown && newY >=  screenHeight) {
+        CGSize imageSize = self.centerButton.imageView.frame.size;
+        CGFloat padding = centerButtonRadius/2;
         
+        CGFloat totalHeight = (imageSize.height + padding);
+    
         [UIView animateWithDuration:1
                               delay:0
                             options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
                              recognizer.view.center = CGPointMake(recognizer.view.center.x, screenHeight);
+                             // show home icon in the top half of the centerButton
+                             self.centerButton.imageEdgeInsets = UIEdgeInsetsMake(- (totalHeight - imageSize.height),
+                                                                                  0.0f,
+                                                                                  0.0f,
+                                                                                  0.0f);
                          }
          // reenable rotation of wheel when it's half hidden
                          completion:^(BOOL finished){
@@ -510,10 +559,20 @@ static float startingAngle = M_PI_2;
             // touch was outside the wheel            
             return;
         }
+        else if (dist <= centerButtonRadius) {
+            // touch was on center button
+            return;
+        }
         else if ([container pointInside:loc withEvent:nil])
         {
+            //self.centerButton.backgroundColor = [UIColor lightGrayColor];
             subview = [container hitTest:loc withEvent:nil];
+            UIView *lastSector = (UIView *)self.sections[self.lastSelectedIndex];
+            lastSector.alpha = minAlphavalue;
             index = fmod(subview.tag + currentValue, 6);
+            UIView *selectedSector = (UIView *)self.sections[(int)index];
+            selectedSector.alpha = maxAlphavalue;
+            self.lastSelectedIndex = index;
             NSLog(@"detected a tap in wheel %@ at loc %@ container %@", NSStringFromCGSize(view.frame.size), NSStringFromCGPoint(loc), NSStringFromCGSize(container.frame.size));
         }
         [self.delegate wheel:self didSelectSectorAtIndex:index];

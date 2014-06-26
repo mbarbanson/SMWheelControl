@@ -7,17 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD683C5E14EAB964005EF069 /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5314EAB964005EF069 /* bg.png */; };
-		BD683C5F14EAB964005EF069 /* centerButton.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5414EAB964005EF069 /* centerButton.png */; };
-		BD683C6014EAB964005EF069 /* icon0.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5514EAB964005EF069 /* icon0.png */; };
-		BD683C6114EAB964005EF069 /* icon1.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5614EAB964005EF069 /* icon1.png */; };
-		BD683C6214EAB964005EF069 /* icon2.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5714EAB964005EF069 /* icon2.png */; };
-		BD683C6314EAB964005EF069 /* icon3.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5814EAB964005EF069 /* icon3.png */; };
-		BD683C6414EAB964005EF069 /* icon4.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5914EAB964005EF069 /* icon4.png */; };
-		BD683C6514EAB964005EF069 /* icon5.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5A14EAB964005EF069 /* icon5.png */; };
-		BD683C6614EAB964005EF069 /* icon6.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5B14EAB964005EF069 /* icon6.png */; };
-		BD683C6714EAB964005EF069 /* icon7.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5C14EAB964005EF069 /* icon7.png */; };
-		BD683C6814EAB964005EF069 /* segment.png in Resources */ = {isa = PBXBuildFile; fileRef = BD683C5D14EAB964005EF069 /* segment.png */; };
 		BDD8AD3614EA8A1B002425D6 /* SMCLove.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD8AD3514EA8A1B002425D6 /* SMCLove.m */; };
 		BDF438A114E5638700A27135 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF438A014E5638700A27135 /* UIKit.framework */; };
 		BDF438A314E5638700A27135 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF438A214E5638700A27135 /* Foundation.framework */; };
@@ -29,22 +18,10 @@
 		BDF438B714E5638700A27135 /* SMViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDF438B514E5638700A27135 /* SMViewController.xib */; };
 		BDF438BF14E5641000A27135 /* SMRotaryWheel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF438BE14E5641000A27135 /* SMRotaryWheel.m */; };
 		BDF438C614E572EB00A27135 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF438C514E572EB00A27135 /* QuartzCore.framework */; };
-		D54FBB421953D3FC0030F232 /* segmentVertical.png in Resources */ = {isa = PBXBuildFile; fileRef = D54FBB411953D3FC0030F232 /* segmentVertical.png */; };
 		D5FF24F81957976400C995B2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5FF24F71957976400C995B2 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BD683C5314EAB964005EF069 /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg.png; sourceTree = "<group>"; };
-		BD683C5414EAB964005EF069 /* centerButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = centerButton.png; sourceTree = "<group>"; };
-		BD683C5514EAB964005EF069 /* icon0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon0.png; sourceTree = "<group>"; };
-		BD683C5614EAB964005EF069 /* icon1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon1.png; sourceTree = "<group>"; };
-		BD683C5714EAB964005EF069 /* icon2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon2.png; sourceTree = "<group>"; };
-		BD683C5814EAB964005EF069 /* icon3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon3.png; sourceTree = "<group>"; };
-		BD683C5914EAB964005EF069 /* icon4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon4.png; sourceTree = "<group>"; };
-		BD683C5A14EAB964005EF069 /* icon5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon5.png; sourceTree = "<group>"; };
-		BD683C5B14EAB964005EF069 /* icon6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon6.png; sourceTree = "<group>"; };
-		BD683C5C14EAB964005EF069 /* icon7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon7.png; sourceTree = "<group>"; };
-		BD683C5D14EAB964005EF069 /* segment.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = segment.png; sourceTree = "<group>"; };
 		BDD8AD3414EA8A1B002425D6 /* SMCLove.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCLove.h; sourceTree = "<group>"; };
 		BDD8AD3514EA8A1B002425D6 /* SMCLove.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCLove.m; sourceTree = "<group>"; };
 		BDF4389C14E5638700A27135 /* SMWheelControl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMWheelControl.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,7 +41,6 @@
 		BDF438BE14E5641000A27135 /* SMRotaryWheel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMRotaryWheel.m; sourceTree = "<group>"; };
 		BDF438C414E56B4B00A27135 /* SMRotaryProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMRotaryProtocol.h; sourceTree = "<group>"; };
 		BDF438C514E572EB00A27135 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		D54FBB411953D3FC0030F232 /* segmentVertical.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = segmentVertical.png; sourceTree = "<group>"; };
 		D5FF24F71957976400C995B2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,25 +59,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BD683C5214EAB964005EF069 /* assets */ = {
-			isa = PBXGroup;
-			children = (
-				D54FBB411953D3FC0030F232 /* segmentVertical.png */,
-				BD683C5314EAB964005EF069 /* bg.png */,
-				BD683C5414EAB964005EF069 /* centerButton.png */,
-				BD683C5514EAB964005EF069 /* icon0.png */,
-				BD683C5614EAB964005EF069 /* icon1.png */,
-				BD683C5714EAB964005EF069 /* icon2.png */,
-				BD683C5814EAB964005EF069 /* icon3.png */,
-				BD683C5914EAB964005EF069 /* icon4.png */,
-				BD683C5A14EAB964005EF069 /* icon5.png */,
-				BD683C5B14EAB964005EF069 /* icon6.png */,
-				BD683C5C14EAB964005EF069 /* icon7.png */,
-				BD683C5D14EAB964005EF069 /* segment.png */,
-			);
-			path = assets;
-			sourceTree = "<group>";
-		};
 		BDF4389114E5638700A27135 = {
 			isa = PBXGroup;
 			children = (
@@ -133,7 +90,6 @@
 		BDF438A614E5638700A27135 /* SMWheelControl */ = {
 			isa = PBXGroup;
 			children = (
-				BD683C5214EAB964005EF069 /* assets */,
 				BDF438AF14E5638700A27135 /* SMAppDelegate.h */,
 				BDF438B014E5638700A27135 /* SMAppDelegate.m */,
 				BDF438B214E5638700A27135 /* SMViewController.h */,
@@ -219,19 +175,7 @@
 			files = (
 				BDF438AB14E5638700A27135 /* InfoPlist.strings in Resources */,
 				BDF438B714E5638700A27135 /* SMViewController.xib in Resources */,
-				BD683C5E14EAB964005EF069 /* bg.png in Resources */,
-				BD683C5F14EAB964005EF069 /* centerButton.png in Resources */,
-				BD683C6014EAB964005EF069 /* icon0.png in Resources */,
-				BD683C6114EAB964005EF069 /* icon1.png in Resources */,
 				D5FF24F81957976400C995B2 /* Images.xcassets in Resources */,
-				BD683C6214EAB964005EF069 /* icon2.png in Resources */,
-				BD683C6314EAB964005EF069 /* icon3.png in Resources */,
-				BD683C6414EAB964005EF069 /* icon4.png in Resources */,
-				BD683C6514EAB964005EF069 /* icon5.png in Resources */,
-				BD683C6614EAB964005EF069 /* icon6.png in Resources */,
-				D54FBB421953D3FC0030F232 /* segmentVertical.png in Resources */,
-				BD683C6714EAB964005EF069 /* icon7.png in Resources */,
-				BD683C6814EAB964005EF069 /* segment.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
